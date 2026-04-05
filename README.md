@@ -1,16 +1,69 @@
-# React + Vite
+# Beloved Connect 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a special note, a cherished song, or a shared memory, Beloved Connect provides a premium platform to keep those connections alive.
 
-Currently, two official plugins are available:
+##  Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Memory Management**: Create and manage personal memories with a cinematic interactive interface.
+- **Quick Reach**: Access your most important memories instantly through a sleek dashboard.
+- **Beloved Ones**: Add and manage profiles for your closest friends and family.
+- **Invitations**: Send invitations to loved ones, allowing them to accept or reject connections.
+- **Premium Design**: Modern, responsive UI with smooth transitions and a focus on visual excellence.
 
-## React Compiler
+## Technology Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React.js with Vite, Vanilla CSS.
+- **Backend**: Python with FastAPI.
+- **API**: RESTful integration between frontend and backend.
 
-## Expanding the ESLint configuration
+##  Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v16+)
+- [Python](https://www.python.org/) (v3.9+)
+
+### Installation
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/shashujasmine/Beloved-Connect.git
+    cd Beloved-Connect
+    ```
+
+2.  **Frontend Setup**
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
+
+3.  **Backend Setup**
+    ```bash
+    cd ../backend
+    python -m venv .venv
+    source .venv/bin/Scripts/activate # Windows: .venv\Scripts\activate
+    pip install -r requirements.txt
+    uvicorn main:app --reload
+    ```
+
+## Project Structure
+
+```text
+Beloved-Connect/
+├── frontend/          # React application
+│   ├── src/           # Source code
+│   └── public/        # Static assets
+├── backend/           # FastAPI application
+└── README.md          # Project documentation
+
+
+##  Contributing
+
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+Built with ❤️ for those we love.
