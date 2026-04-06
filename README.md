@@ -1,13 +1,21 @@
 # Beloved Connect 💖
 
-Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a special note, a cherished song, or a shared memory, Beloved Connect provides a premium platform to keep those connections alive.
+> **Recap and store the moments that matter.**
+
+Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a shared memory, a special note, or a cherished moment, Beloved Connect provides a premium platform to keep those connections alive.
+
+## 🌟 The Core Mission
+
+The main purpose of this project is to provide a dedicated space for **storing and recapping memories**. It allows you to invite your people, take notes about your shared experiences, and build a lasting digital archive of your beloved ones.
+
+*Note: While the interface includes communication options, the heart of the project lies in memory preservation and relationship tracking. Call and video functions are currently placeholders, as the primary focus is on the "Invitations" and "Memory Storage" systems.*
 
 ## ✨ Features
 
 - **Memory Management**: Create and manage personal memories with a cinematic interactive interface.
+- **Invitations & Connection**: Send messages and invitations to loved ones. Connections are active once the invited person accepts.
+- **Notes & Profiles**: Take detailed notes about your beloved ones and your shared journeys.
 - **Quick Reach**: Access your most important memories instantly through a sleek dashboard.
-- **Beloved Ones**: Add and manage profiles for your closest friends and family.
-- **Invitations**: Send invitations to loved ones, allowing them to accept or reject connections.
 - **Premium Design**: Modern, responsive UI with smooth transitions and a focus on visual excellence.
 
 ## 🛠️ Technology Stack
