@@ -2,8 +2,6 @@
 
 Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a special note, a cherished song, or a shared memory, Beloved Connect provides a premium platform to keep those connections alive.
 
-
-
 ## ✨ Features
 
 - **Memory Management**: Create and manage personal memories with a cinematic interactive interface.
