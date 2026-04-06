@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MessageCircle, Video } from 'lucide-react';
+import { Phone, Video, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const QuickReach = ({ onOpenModal }) => {
@@ -27,27 +27,28 @@ const QuickReach = ({ onOpenModal }) => {
     >
       <motion.div className="quick-reach-item" variants={item}>
         <div className="quick-reach-tooltip">Voice Call</div>
-        <button className="btn-icon">
-          <Phone size={20} />
+        <button className="quick-btn voice-btn">
+          <Phone size={22} color="#fff" />
         </button>
       </motion.div>
       
       <motion.div className="quick-reach-item" variants={item}>
         <div className="quick-reach-tooltip">Video Call</div>
-        <button className="btn-icon" style={{ background: 'linear-gradient(135deg, var(--secondary-color), #818cf8)', color: 'white' }}>
-          <Video size={20} />
+        <button className="quick-btn video-btn">
+          <Video size={22} color="#fff" />
         </button>
       </motion.div>
       
       <motion.div className="quick-reach-item" variants={item}>
-        <div className="quick-reach-tooltip">Send to Beloved</div>
-        <button 
-          className="btn-icon" 
-          style={{ background: 'linear-gradient(135deg, var(--primary-color), var(--primary-dark))', color: 'white' }}
+        <div className="quick-reach-tooltip">Send Love</div>
+        <motion.button 
+          className="quick-btn love-btn"
           onClick={onOpenModal}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <MessageCircle size={20} />
-        </button>
+          <Heart size={22} fill="#fff" color="#fff" />
+        </motion.button>
       </motion.div>
     </motion.div>
   );

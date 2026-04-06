@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 import os
 
+
 app = FastAPI(title="Beloved Connect API")
 
 app.add_middleware(
@@ -16,17 +17,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Helpers ─────────────────────────────────────────────
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def read_json(file: str):
-    if os.path.exists(file):
-        with open(file, "r") as f:
+    path = os.path.join(BASE_DIR, file)
+    if os.path.exists(path):
+        with open(path, "r") as f:
             return json.load(f)
     return []
 
 def write_json(file: str, data):
-    with open(file, "w") as f:
+    path = os.path.join(BASE_DIR, file)
+    with open(path, "w") as f:
         json.dump(data, f, indent=4)
+    print(f"Data saved to {path}")
 
 def now_str():
     return datetime.now().strftime("%b %d, %Y")
@@ -34,7 +38,7 @@ def now_str():
 def new_id():
     return int(datetime.now().timestamp() * 1000)
 
-# ── Models ───────────────────────────────────────────────
+
 
 class Memory(BaseModel):
     title: str
@@ -51,7 +55,7 @@ class Invitation(BaseModel):
 class Note(BaseModel):
     title: str
     content: str
-    category: Optional[str] = "me"   # me | beloved | shared
+    category: Optional[str] = "me"   
     date: Optional[str] = None
     id: Optional[int] = None
 
@@ -63,7 +67,7 @@ class BelovedPerson(BaseModel):
     notes: Optional[str] = ""
     id: Optional[int] = None
 
-# ── Files ────────────────────────────────────────────────
+
 
 FILES = {
     "memories":    "memories.json",
@@ -72,7 +76,7 @@ FILES = {
     "beloved":     "beloved.json",
 }
 
-# ── Memories ─────────────────────────────────────────────
+
 
 @app.get("/api/memories", response_model=List[Memory])
 async def get_memories():
@@ -80,6 +84,7 @@ async def get_memories():
 
 @app.post("/api/memories", response_model=Memory)
 async def add_memory(memory: Memory):
+    print(f"Adding memory: {memory}")
     data = read_json(FILES["memories"])
     item = memory.model_dump()
     item["id"] = new_id()
@@ -87,9 +92,10 @@ async def add_memory(memory: Memory):
         item["date"] = now_str()
     data.insert(0, item)
     write_json(FILES["memories"], data)
+    print(f"Memory saved: {item}")
     return item
 
-# ── Invitations ───────────────────────────────────────────
+
 
 @app.get("/api/invitations")
 async def get_invitations():
@@ -105,7 +111,6 @@ async def send_invitation(invitation: Invitation):
     write_json(FILES["invitations"], data)
     return {"message": "Invitation sent successfully", "data": item}
 
-# ── Notes ────────────────────────────────────────────────
 
 @app.get("/api/notes", response_model=List[Note])
 async def get_notes():
@@ -131,7 +136,6 @@ async def delete_note(note_id: int):
     write_json(FILES["notes"], updated)
     return {"message": "Note deleted"}
 
-# ── Beloved Ones ──────────────────────────────────────────
 
 @app.get("/api/beloved", response_model=List[BelovedPerson])
 async def get_beloved():
