@@ -55,16 +55,6 @@ The main purpose of this project is to provide a dedicated space for **storing a
     uvicorn main:app --reload
     ```
 
-##  Project Structure
-
-```text
-Beloved-Connect/
-├── frontend/          # React application
-│   ├── src/           # Source code
-│   └── public/        # Static assets
-├── backend/           # FastAPI application
-└── README.md          # Project documentation
-```
 
 ##  Contributing
 
