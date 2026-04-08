@@ -11,9 +11,12 @@ const BelovedOnes = () => {
   const [isFocused, setIsFocused] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/beloved`)
+    const token = localStorage.getItem('token');
+    fetch(`${API_URL}/beloved`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(res => res.json())
-      .then(data => setPeople(data))
+      .then(data => setPeople(Array.isArray(data) ? data : []))
       .catch(err => console.error('Failed to fetch beloved ones:', err));
   }, []);
 
@@ -24,9 +27,13 @@ const BelovedOnes = () => {
     if (!form.name.trim()) return;
 
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`${API_URL}/beloved`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(form),
       });
       if (res.ok) {
@@ -42,7 +49,11 @@ const BelovedOnes = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`${API_URL}/beloved/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/beloved/${id}`, { 
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) setPeople(people.filter(p => p.id !== id));
     } catch (err) {
       console.error('Error deleting:', err);
@@ -220,18 +231,24 @@ const BelovedOnes = () => {
                     <div className="beloved-contact">
                     {person.mobile && (
                       <span 
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 500 }}
+                      >
+                        <Phone size={13} /> {person.mobile}
+                      </span>
+                    )}
+                    {person.email && (
+                      <span 
                         onClick={() => {
                           if (window.openSendLoveModal) {
-                            window.openSendLoveModal(person.mobile);
+                            window.openSendLoveModal(person.email);
                           }
                         }}
                         style={{ cursor: 'pointer', color: 'var(--accent-warm)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 500 }}
                         className="contact-link"
                       >
-                        <Phone size={13} /> {person.mobile}
+                        <Mail size={13} /> {person.email}
                       </span>
                     )}
-                    {person.email && <span><Mail size={13} /> {person.email}</span>}
                   </div>
                   {person.notes && <p className="beloved-notes">{person.notes}</p>}
                 </div>

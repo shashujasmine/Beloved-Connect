@@ -1,16 +1,16 @@
-# Beloved Connect 💖
+# Beloved Connect 
 
 > **Recap and store the moments that matter.**
 
 Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a shared memory, a special note, or a cherished moment, Beloved Connect provides a premium platform to keep those connections alive.
 
-## 🌟 The Core Mission
+##  The Core Mission
 
 The main purpose of this project is to provide a dedicated space for **storing and recapping memories**. It allows you to invite your people, take notes about your shared experiences, and build a lasting digital archive of your beloved ones.
 
 *Note: While the interface includes communication options, the heart of the project lies in memory preservation and relationship tracking. Call and video functions are currently placeholders, as the primary focus is on the "Invitations" and "Memory Storage" systems.*
 
-## ✨ Features
+##  Features
 
 - **Memory Management**: Create and manage personal memories with a cinematic interactive interface.
 - **Invitations & Connection**: Send messages and invitations to loved ones. Connections are active once the invited person accepts.
@@ -18,13 +18,13 @@ The main purpose of this project is to provide a dedicated space for **storing a
 - **Quick Reach**: Access your most important memories instantly through a sleek dashboard.
 - **Premium Design**: Modern, responsive UI with smooth transitions and a focus on visual excellence.
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 - **Frontend**: React.js with Vite, Vanilla CSS.
 - **Backend**: Python with FastAPI.
 - **API**: RESTful integration between frontend and backend.
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -55,7 +55,7 @@ The main purpose of this project is to provide a dedicated space for **storing a
     uvicorn main:app --reload
     ```
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 Beloved-Connect/
@@ -66,7 +66,7 @@ Beloved-Connect/
 └── README.md          # Project documentation
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the project.
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
@@ -75,4 +75,4 @@ Beloved-Connect/
 5. Open a Pull Request.
 
 ---
-Built with ❤️ for those we love.
+Built with people for those we love.

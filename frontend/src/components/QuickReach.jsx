@@ -25,20 +25,7 @@ const QuickReach = ({ onOpenModal }) => {
       initial="hidden"
       animate="show"
     >
-      <motion.div className="quick-reach-item" variants={item}>
-        <div className="quick-reach-tooltip">Voice Call</div>
-        <button className="quick-btn voice-btn">
-          <Phone size={22} color="#fff" />
-        </button>
-      </motion.div>
-      
-      <motion.div className="quick-reach-item" variants={item}>
-        <div className="quick-reach-tooltip">Video Call</div>
-        <button className="quick-btn video-btn">
-          <Video size={22} color="#fff" />
-        </button>
-      </motion.div>
-      
+
       <motion.div className="quick-reach-item" variants={item}>
         <div className="quick-reach-tooltip">Send Love</div>
         <motion.button 

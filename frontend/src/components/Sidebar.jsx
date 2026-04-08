@@ -68,4 +68,4 @@ const Sidebar = ({ isOpen, onClose, activeView, onNavigate }) => {
   );
 };
 
-export default Sidebar;
+export default Sidebar; 

@@ -26,7 +26,7 @@ const NewMemory = ({ onAddMemory }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="new-memory-form"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -43,7 +43,7 @@ const NewMemory = ({ onAddMemory }) => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <motion.div 
+        <motion.div
           className={`form-group ${isFocused === 'title' ? 'focused' : ''}`}
           animate={{ scale: isFocused === 'title' ? 1.01 : 1 }}
           transition={{ duration: 0.2 }}
@@ -52,7 +52,7 @@ const NewMemory = ({ onAddMemory }) => {
             <Heart size={12} />
             What reminded you of them?
           </label>
-          <input 
+          <input
             type="text"
             id="title"
             className="input"
@@ -62,7 +62,7 @@ const NewMemory = ({ onAddMemory }) => {
             onFocus={() => setIsFocused('title')}
             onBlur={() => setIsFocused(null)}
           />
-          <motion.span 
+          <motion.span
             className="input-accent"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: isFocused === 'title' ? 1 : 0 }}
@@ -70,7 +70,7 @@ const NewMemory = ({ onAddMemory }) => {
           />
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className={`form-group ${isFocused === 'content' ? 'focused' : ''}`}
           animate={{ scale: isFocused === 'content' ? 1.01 : 1 }}
           transition={{ duration: 0.2 }}
@@ -88,7 +88,7 @@ const NewMemory = ({ onAddMemory }) => {
             onFocus={() => setIsFocused('content')}
             onBlur={() => setIsFocused(null)}
           />
-          <motion.span 
+          <motion.span
             className="input-accent"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: isFocused === 'content' ? 1 : 0 }}
@@ -97,8 +97,8 @@ const NewMemory = ({ onAddMemory }) => {
         </motion.div>
 
         <div className="form-actions">
-          <motion.button 
-            type="submit" 
+          <motion.button
+            type="submit"
             className="btn-primary"
             disabled={!title.trim() || !content.trim()}
             whileHover={{ scale: 1.02 }}
@@ -112,7 +112,7 @@ const NewMemory = ({ onAddMemory }) => {
 
       <AnimatePresence>
         {isSubmitted && (
-          <motion.div 
+          <motion.div
             className="submit-success"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

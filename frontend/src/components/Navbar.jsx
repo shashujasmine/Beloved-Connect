@@ -2,7 +2,7 @@ import React from 'react';
 import { Heart, Sun, Moon, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const Navbar = ({ toggleTheme, isDark, onMenuOpen }) => {
+const Navbar = ({ toggleTheme, isDark, onMenuOpen, children }) => {
   return (
     <nav className="navbar">
       <div className="container nav-container">
@@ -36,9 +36,12 @@ const Navbar = ({ toggleTheme, isDark, onMenuOpen }) => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <button className="btn-icon" onClick={toggleTheme} aria-label="Toggle Theme">
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {children}
+            <button className="btn-icon" onClick={toggleTheme} aria-label="Toggle Theme">
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+          </div>
         </motion.div>
       </div>
     </nav>

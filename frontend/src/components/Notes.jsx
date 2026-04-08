@@ -19,9 +19,12 @@ const Notes = () => {
   const [isFocused, setIsFocused] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/notes`)
+    const token = localStorage.getItem('token');
+    fetch(`${API_URL}/notes`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(res => res.json())
-      .then(data => setNotes(data))
+      .then(data => setNotes(Array.isArray(data) ? data : []))
       .catch(err => console.error('Failed to fetch notes:', err));
   }, []);
 
@@ -31,9 +34,13 @@ const Notes = () => {
 
     console.log('Sending note:', { title, content, category: activeCategory });
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`${API_URL}/notes`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ title, content, category: activeCategory }),
       });
       console.log('Response status:', res.status);
@@ -57,7 +64,11 @@ const Notes = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`${API_URL}/notes/${id}`, { method: 'DELETE' });
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/notes/${id}`, { 
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) setNotes(notes.filter(n => n.id !== id));
     } catch (err) {
       console.error('Error deleting note:', err);

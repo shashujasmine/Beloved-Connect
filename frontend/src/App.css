@@ -10,7 +10,7 @@
   background: var(--bg-primary);
 }
 
-/* Navbar */
+
 .navbar {
   position: sticky;
   top: 0;
@@ -40,7 +40,7 @@
   color: var(--accent-burgundy);
 }
 
-/* Hero Section - asymmetric, editorial */
+
 .hero {
   padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 3rem);
   max-width: 900px;
@@ -80,7 +80,7 @@
   line-height: 1.7;
 }
 
-/* Page header with action */
+
 .page-header {
   display: flex;
   align-items: flex-end;
@@ -105,7 +105,7 @@
   font-weight: 400;
 }
 
-/* Memories grid - varied sizes */
+
 .memories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -113,7 +113,7 @@
   margin-top: 2rem;
 }
 
-/* Memory Card */
+
 .memory-card {
   padding: 1.75rem;
   display: flex;
@@ -224,7 +224,7 @@
   pointer-events: none;
 }
 
-/* New Memory Form */
+
 .new-memory-form {
   padding: 2rem;
   margin-bottom: 3rem;
@@ -368,7 +368,7 @@
   white-space: nowrap;
 }
 
-/* Quick Reach */
+
 .quick-reach {
   position: fixed;
   bottom: 2rem;
@@ -469,7 +469,6 @@
   color: #2e2028;
 }
 
-/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -480,6 +479,8 @@
   justify-content: center;
   z-index: 1000;
 }
+
+
 
 .modal-content {
   background: var(--bg-elevated);
@@ -1069,21 +1070,21 @@
   .hero {
     text-align: left;
   }
-  
+
   .memories-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .sidebar {
     width: 100%;
     border-radius: 0;
   }
-  
+
   .quick-reach {
     bottom: 1rem;
     right: 1rem;
   }
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;

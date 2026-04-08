@@ -1,49 +1,27 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Music, MessageSquare, Heart, Search } from 'lucide-react';
+import { X, Send, Heart, Mail } from 'lucide-react';
 
-const SONG_LIBRARY = [
-  { title: "Perfect", artist: "Ed Sheeran" },
-  { title: "All of Me", artist: "John Legend" },
-  { title: "Can't Help Falling in Love", artist: "Elvis Presley" },
-  { title: "A Thousand Years", artist: "Christina Perri" },
-  { title: "Say You Won't Let Go", artist: "James Arthur" },
-  { title: "Thinking Out Loud", artist: "Ed Sheeran" },
-  { title: "Just the Way You Are", artist: "Bruno Mars" },
-  { title: "Everything", artist: "Michael Bublé" },
-  { title: "Lover", artist: "Taylor Swift" },
-  { title: "Adore You", artist: "Harry Styles" },
-  { title: "My Girl", artist: "The Temptations" },
-  { title: "Isn't She Lovely", artist: "Stevie Wonder" }
-];
-
-const SendLoveModal = ({ isOpen, onClose, onSend, initialMobile = '' }) => {
-  const [mobile, setMobile] = useState(initialMobile);
-  const [type, setType] = useState('message');
+const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
+  const [email, setEmail] = useState(initialEmail);
   const [content, setContent] = useState('');
   const [isFocused, setIsFocused] = useState(null);
   const [isSent, setIsSent] = useState(false);
-  const [songSearch, setSongSearch] = useState('');
-
-  const filteredSongs = SONG_LIBRARY.filter(song => 
-    `${song.title} ${song.artist}`.toLowerCase().includes(content.toLowerCase())
-  ).slice(0, 5);
 
   React.useEffect(() => {
     if (isOpen) {
-      setMobile(initialMobile || '');
+      setEmail(initialEmail || '');
     }
-  }, [isOpen, initialMobile]);
+  }, [isOpen, initialEmail]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!mobile || !content) return;
+    if (!email || !content) return;
     
-    onSend({ mobile, type, content });
+    onSend({ email, content, type: 'message' });
     
-    setMobile('');
+    setEmail('');
     setContent('');
-    setType('message');
     setIsSent(true);
     setTimeout(() => {
       setIsSent(false);
@@ -98,107 +76,38 @@ const SendLoveModal = ({ isOpen, onClose, onSend, initialMobile = '' }) => {
                 
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
-                    <label htmlFor="mobile">
-                      <Heart size={12} />
-                      Their Mobile Number
+                    <label htmlFor="email">
+                      <Mail size={12} />
+                      Their Email Address
                     </label>
                     <input 
-                      type="tel" 
-                      id="mobile"
+                      type="email" 
+                      id="email"
                       className="input"
-                      placeholder="+1 234 567 8900" 
-                      value={mobile}
-                      onChange={(e) => setMobile(e.target.value)}
-                      onFocus={() => setIsFocused('mobile')}
+                      placeholder="their@email.com" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onFocus={() => setIsFocused('email')}
                       onBlur={() => setIsFocused(null)}
                       required
                     />
                   </div>
                   
                   <div className="form-group">
-                    <label>
-                      <Heart size={12} />
-                      What would you like to send?
-                    </label>
-                    <div className="type-selector">
-                      <button 
-                        type="button"
-                        className={`type-btn ${type === 'message' ? 'active' : ''}`}
-                        onClick={() => setType('message')}
-                      >
-                        <MessageSquare size={18} />
-                        <span>A Message</span>
-                      </button>
-                      <button 
-                        type="button"
-                        className={`type-btn ${type === 'song' ? 'active' : ''}`}
-                        onClick={() => setType('song')}
-                      >
-                        <Music size={18} />
-                        <span>A Song</span>
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="form-group">
                     <label htmlFor="content">
                       <Heart size={12} />
-                      {type === 'message' ? 'Your Message' : 'Song Name & Artist'}
+                      Your Message
                     </label>
-                    {type === 'message' ? (
-                      <textarea 
-                        id="content"
-                        className="input"
-                        placeholder="I was just thinking about you..."
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        onFocus={() => setIsFocused('content')}
-                        onBlur={() => {
-                          setTimeout(() => setIsFocused(null), 200);
-                        }}
-                        required
-                      />
-                    ) : (
-                      <div className="song-search-container">
-                        <input 
-                          type="text"
-                          id="content-song"
-                          className="input"
-                          placeholder="Search for a song..."
-                          value={content}
-                          onChange={(e) => setContent(e.target.value)}
-                          onFocus={() => setIsFocused('content')}
-                          onBlur={() => {
-                            setTimeout(() => setIsFocused(null), 200);
-                          }}
-                          required
-                        />
-                        <AnimatePresence>
-                          {isFocused === 'content' && content.length > 0 && filteredSongs.length > 0 && (
-                            <motion.div 
-                              className="song-suggestions glass"
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                            >
-                              {filteredSongs.map((song, i) => (
-                                <div 
-                                  key={i} 
-                                  className="song-item"
-                                  onClick={() => setContent(`${song.title} - ${song.artist}`)}
-                                >
-                                  <Music size={14} />
-                                  <div>
-                                    <div className="song-name">{song.title}</div>
-                                    <div className="song-artist">{song.artist}</div>
-                                  </div>
-                                </div>
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    )}
+                    <textarea 
+                      id="content"
+                      className="input"
+                      placeholder="I was just thinking about you..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      onFocus={() => setIsFocused('content')}
+                      onBlur={() => setIsFocused(null)}
+                      required
+                    />
                   </div>
                   
                   <motion.button 

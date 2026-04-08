@@ -7,6 +7,7 @@ import NewMemory from './components/NewMemory';
 import Notes from './components/Notes';
 import BelovedOnes from './components/BelovedOnes';
 import SendLoveModal from './components/SendLoveModal';
+import Auth from './components/Auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send } from 'lucide-react';
 import './App.css';
@@ -14,18 +15,19 @@ import './App.css';
 const API_URL = 'http://127.0.0.1:8000/api';
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeView, setActiveView] = useState('memories');
   const [memories, setMemories] = useState([]);
   const [invitations, setInvitations] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [prefilledMobile, setPrefilledMobile] = useState('');
+  const [prefilledEmail, setPrefilledEmail] = useState('');
 
-  // Expose a global way to open the modal with a mobile number
+  // Expose a global way to open the modal with an email
   useEffect(() => {
-    window.openSendLoveModal = (mobile) => {
-      setPrefilledMobile(mobile);
+    window.openSendLoveModal = (email) => {
+      setPrefilledEmail(email);
       setIsModalOpen(true);
     };
     return () => delete window.openSendLoveModal;
@@ -36,62 +38,81 @@ function App() {
   }, [isDark]);
 
   useEffect(() => {
-    fetch(`${API_URL}/memories`)
-      .then(r => r.json()).then(setMemories)
-      .catch(err => console.error('Fetch memories failed:', err));
-  }, []);
+    if (token) {
+      fetch(`${API_URL}/memories`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) setMemories(data);
+          else if (data.detail === "Could not validate credentials") handleLogout();
+        })
+        .catch(err => console.error('Fetch memories failed:', err));
+    }
+  }, [token]);
 
   useEffect(() => {
-    if (activeView === 'invitations') {
-      fetch(`${API_URL}/invitations`)
-        .then(r => r.json()).then(setInvitations)
+    if (token && activeView === 'invitations') {
+      fetch(`${API_URL}/invitations`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) setInvitations(data);
+        })
         .catch(err => console.error('Fetch invitations failed:', err));
     }
-  }, [activeView]);
+  }, [activeView, token]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  };
 
   const handleAddMemory = async (newMemory) => {
-    console.log('Sending memory:', newMemory);
     try {
       const res = await fetch(`${API_URL}/memories`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(newMemory),
       });
-      console.log('Response status:', res.status);
       if (res.ok) {
         const added = await res.json();
-        console.log('Memory added successfully:', added);
         setMemories(prev => [added, ...prev]);
       } else {
         const errTxt = await res.text();
-        console.error('Failed to add memory:', errTxt);
         alert('Failed to add memory: ' + errTxt);
       }
     } catch (err) { 
-      console.error('Error adding memory:', err);
       alert('Error adding memory: ' + err.message);
     }
   };
 
   const handleSendLove = async (data) => {
-    console.log('Sending love:', data);
     try {
       const res = await fetch(`${API_URL}/invitations`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(data),
       });
-      console.log('Response status:', res.status);
       if (res.ok) {
         const result = await res.json();
-        console.log('Invitation sent successfully:', result);
         setInvitations(prev => [result.data, ...prev]);
         alert('Your invitation has been sent!');
       } else {
         alert('Failed to send invitation');
       }
     } catch (err) { 
-      console.error('Error sending invitation:', err);
       alert('Error sending invitation.'); 
     }
   };
@@ -102,9 +123,15 @@ function App() {
     exit: { opacity: 0, y: -10 },
   };
 
+  if (!token) {
+    return <Auth setToken={setToken} />;
+  }
+
   return (
     <div className={`app-container ${isDark ? 'dark' : ''}`}>
-      <Navbar isDark={isDark} toggleTheme={() => setIsDark(d => !d)} onMenuOpen={() => setIsSidebarOpen(true)} />
+      <Navbar isDark={isDark} toggleTheme={() => setIsDark(d => !d)} onMenuOpen={() => setIsSidebarOpen(true)}>
+        <button onClick={handleLogout} className="btn-cancel" style={{ marginLeft: '1rem', padding: '0.4rem 0.8rem' }}>Logout</button>
+      </Navbar>
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} activeView={activeView} onNavigate={setActiveView} />
 
       <main className="main-content">
@@ -160,10 +187,10 @@ function App() {
                     <motion.div key={inv.id} className="memory-card glass" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
                       <span className="memory-date">{inv.date}</span>
                       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ background: inv.type === 'song' ? 'var(--secondary-color)' : 'var(--primary-color)', color:'white', borderRadius:'20px', padding:'2px 10px', fontSize:'0.75rem', fontWeight:600 }}>
-                          {inv.type === 'song' ? '🎵 Song' : '💬 Message'}
+                        <span style={{ background: 'var(--primary-color)', color:'white', borderRadius:'20px', padding:'2px 10px', fontSize:'0.75rem', fontWeight:600 }}>
+                          💬 Message
                         </span>
-                        <span style={{ fontSize:'0.8rem', color:'var(--text-muted)' }}>to {inv.mobile}</span>
+                        <span style={{ fontSize:'0.8rem', color:'var(--text-muted)' }}>to {inv.email}</span>
                       </div>
                       <p className="memory-content">{inv.content}</p>
                       <span style={{ fontSize:'0.8rem', color: inv.status === 'accepted' ? '#34d399' : inv.status === 'rejected' ? '#f87171' : 'var(--text-muted)', fontWeight:600 }}>
@@ -184,12 +211,12 @@ function App() {
         </AnimatePresence>
       </main>
 
-      <QuickReach onOpenModal={() => { setPrefilledMobile(''); setIsModalOpen(true); }} />
+      <QuickReach onOpenModal={() => { setPrefilledEmail(''); setIsModalOpen(true); }} />
       <SendLoveModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSend={handleSendLove} 
-        initialMobile={prefilledMobile}
+        initialEmail={prefilledEmail}
       />
     </div>
   );
