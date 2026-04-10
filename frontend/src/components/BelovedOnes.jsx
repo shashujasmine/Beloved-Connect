@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Phone, Mail, Trash2, Heart, User } from 'lucide-react';
 
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 const BelovedOnes = () => {
   const [people, setPeople] = useState([]);

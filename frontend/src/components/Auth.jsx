@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 const Auth = ({ setToken }) => {
   const [isLogin, setIsLogin] = useState(true);

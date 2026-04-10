@@ -12,8 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send } from 'lucide-react';
 import './App.css';
 
-const API_URL = 'http://127.0.0.1:8000/api';
-
+const API_URL = import.meta.env.VITE_API_URL || 'https://belovedconnect.up.railway.app/api';
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isDark, setIsDark] = useState(false);
@@ -77,7 +76,7 @@ function App() {
     try {
       const res = await fetch(`${API_URL}/memories`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -90,7 +89,7 @@ function App() {
         const errTxt = await res.text();
         alert('Failed to add memory: ' + errTxt);
       }
-    } catch (err) { 
+    } catch (err) {
       alert('Error adding memory: ' + err.message);
     }
   };
@@ -99,7 +98,7 @@ function App() {
     try {
       const res = await fetch(`${API_URL}/invitations`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -112,8 +111,8 @@ function App() {
       } else {
         alert('Failed to send invitation');
       }
-    } catch (err) { 
-      alert('Error sending invitation.'); 
+    } catch (err) {
+      alert('Error sending invitation.');
     }
   };
 
@@ -192,13 +191,13 @@ function App() {
                     <motion.div key={inv.id} className="memory-card glass" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
                       <span className="memory-date">{inv.date}</span>
                       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ background: 'var(--primary-color)', color:'white', borderRadius:'20px', padding:'2px 10px', fontSize:'0.75rem', fontWeight:600 }}>
+                        <span style={{ background: 'var(--primary-color)', color: 'white', borderRadius: '20px', padding: '2px 10px', fontSize: '0.75rem', fontWeight: 600 }}>
                           💬 Message
                         </span>
-                        <span style={{ fontSize:'0.8rem', color:'var(--text-muted)' }}>to {inv.email}</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>to {inv.email}</span>
                       </div>
                       <p className="memory-content">{inv.content}</p>
-                      <span style={{ fontSize:'0.8rem', color: inv.status === 'accepted' ? '#34d399' : inv.status === 'rejected' ? '#f87171' : 'var(--text-muted)', fontWeight:600 }}>
+                      <span style={{ fontSize: '0.8rem', color: inv.status === 'accepted' ? '#34d399' : inv.status === 'rejected' ? '#f87171' : 'var(--text-muted)', fontWeight: 600 }}>
                         ● {inv.status?.toUpperCase()}
                       </span>
                     </motion.div>
@@ -217,10 +216,10 @@ function App() {
       </main>
 
       <QuickReach onOpenModal={() => { setPrefilledEmail(''); setIsModalOpen(true); }} />
-      <SendLoveModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSend={handleSendLove} 
+      <SendLoveModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSend={handleSendLove}
         initialEmail={prefilledEmail}
       />
     </div>

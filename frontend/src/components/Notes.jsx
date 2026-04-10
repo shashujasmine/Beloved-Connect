@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, FileText, User, Heart, Trash2, PenLine, Send } from 'lucide-react';
 
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 const CATEGORIES = [
   { id: 'me', label: 'About Me', icon: User, color: 'var(--accent-burgundy)' },
