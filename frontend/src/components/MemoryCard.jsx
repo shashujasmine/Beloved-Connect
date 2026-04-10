@@ -32,6 +32,11 @@ const MemoryCard = ({ memory, index }) => {
       <span className="memory-date">{memory.date}</span>
       <h3 className="memory-title">{memory.title}</h3>
       <p className="memory-content">{memory.content}</p>
+      {memory.shared_with && (
+        <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: '600' }}>
+          Shared with: {memory.shared_with}
+        </div>
+      )}
 
       <div className="memory-actions">
         <motion.button 

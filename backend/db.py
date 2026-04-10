@@ -27,6 +27,7 @@ def init_db():
             title TEXT,
             content TEXT,
             date TEXT,
+            shared_with TEXT,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
@@ -38,6 +39,7 @@ def init_db():
             content TEXT,
             category TEXT,
             date TEXT,
+            shared_with TEXT,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')

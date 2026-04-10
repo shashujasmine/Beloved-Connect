@@ -129,6 +129,11 @@ function App() {
 
   return (
     <div className={`app-container ${isDark ? 'dark' : ''}`}>
+      <div className="bg-blobs">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+      </div>
       <Navbar isDark={isDark} toggleTheme={() => setIsDark(d => !d)} onMenuOpen={() => setIsSidebarOpen(true)}>
         <button onClick={handleLogout} className="btn-cancel" style={{ marginLeft: '1rem', padding: '0.4rem 0.8rem' }}>Logout</button>
       </Navbar>

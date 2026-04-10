@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FileText, User, Heart, Trash2, PenLine } from 'lucide-react';
+import { Plus, FileText, User, Heart, Trash2, PenLine, Send } from 'lucide-react';
 
 const API_URL = 'http://127.0.0.1:8000/api';
 
@@ -16,6 +16,7 @@ const Notes = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [sharedWith, setSharedWith] = useState('');
   const [isFocused, setIsFocused] = useState(null);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Notes = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ title, content, category: activeCategory }),
+        body: JSON.stringify({ title, content, category: activeCategory, shared_with: sharedWith || null }),
       });
       console.log('Response status:', res.status);
       if (res.ok) {
@@ -50,6 +51,7 @@ const Notes = () => {
         setNotes([newNote, ...notes]);
         setTitle('');
         setContent('');
+        setSharedWith('');
         setIsAdding(false);
       } else {
         const errTxt = await res.text();
@@ -166,16 +168,52 @@ const Notes = () => {
                     onBlur={() => setIsFocused(null)}
                   />
                 </div>
+                <div className="form-group">
+                  <label htmlFor="note-shared">
+                    <Heart size={12} />
+                    Share with (Email) - Optional
+                  </label>
+                  <input 
+                    type="email" 
+                    id="note-shared"
+                    className="input"
+                    placeholder="Enter email to share this note" 
+                    value={sharedWith} 
+                    onChange={e => setSharedWith(e.target.value)}
+                    onFocus={() => setIsFocused('shared')}
+                    onBlur={() => setIsFocused(null)}
+                  />
+                  <AnimatePresence>
+                    {sharedWith && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+                        animate={{ opacity: 1, height: 'auto', marginTop: '0.8rem' }}
+                        exit={{ opacity: 0, height: 0 }}
+                      >
+                        <button
+                          type="submit"
+                          className="btn-primary"
+                          style={{ width: '100%', justifyContent: 'center', backgroundColor: 'var(--primary-color)' }}
+                        >
+                          <Send size={16} />
+                          Send to this mail
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
                 <div className="form-actions">
-                  <motion.button 
-                    type="submit" 
-                    className="btn-primary"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Plus size={16} />
-                    Save Note
-                  </motion.button>
+                  {!sharedWith && (
+                    <motion.button 
+                      type="submit" 
+                      className="btn-primary"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Plus size={16} />
+                      Save Note
+                    </motion.button>
+                  )}
                   <button 
                     type="button" 
                     className="btn-cancel"
@@ -214,6 +252,11 @@ const Notes = () => {
                 </button>
               </div>
               <p className="memory-content">{note.content}</p>
+              {note.shared_with && (
+                <div style={{ marginTop: '0.8rem', fontSize: '0.8rem', color: 'var(--primary-color)', fontWeight: '600' }}>
+                  Shared with: {note.shared_with}
+                </div>
+              )}
             </motion.div>
           ))}
           {filtered.length === 0 && (

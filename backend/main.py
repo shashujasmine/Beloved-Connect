@@ -35,8 +35,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 def get_password_hash(password):
-    # truncates inside bcrypt if < version 4, and handles directly
+
     trunc_pw = password.encode('utf-8')[:71]
     return bcrypt.hashpw(trunc_pw, bcrypt.gensalt()).decode('utf-8')
 
@@ -87,6 +88,7 @@ class Memory(BaseModel):
     title: str
     content: str
     date: Optional[str] = None
+    shared_with: Optional[str] = None
     id: Optional[int] = None
 
 class Invitation(BaseModel):
@@ -102,6 +104,7 @@ class Note(BaseModel):
     content: str
     category: Optional[str] = "me"   
     date: Optional[str] = None
+    shared_with: Optional[str] = None
     id: Optional[int] = None
 
 class BelovedPerson(BaseModel):
@@ -146,7 +149,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.get("/api/memories", response_model=List[Memory])
 def get_memories(current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
-    memories = conn.execute("SELECT * FROM memories WHERE user_id = ? ORDER BY id DESC", (current_user["id"],)).fetchall()
+    memories = conn.execute("SELECT * FROM memories WHERE user_id = ? OR shared_with = ? ORDER BY id DESC", (current_user["id"], current_user["username"])).fetchall()
     conn.close()
     return [dict(m) for m in memories]
 
@@ -155,8 +158,8 @@ def add_memory(memory: Memory, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cur = conn.cursor()
     date_str = memory.date or now_str()
-    cur.execute("INSERT INTO memories (user_id, title, content, date) VALUES (?, ?, ?, ?)", 
-                (current_user["id"], memory.title, memory.content, date_str))
+    cur.execute("INSERT INTO memories (user_id, title, content, date, shared_with) VALUES (?, ?, ?, ?, ?)", 
+                (current_user["id"], memory.title, memory.content, date_str, memory.shared_with))
     conn.commit()
     memory.id = cur.lastrowid
     memory.date = date_str
@@ -192,10 +195,10 @@ def send_invitation(invitation: Invitation, current_user: dict = Depends(get_cur
         msg['From'] = f"Beloved Connect <{SMTP_USERNAME}>"
         msg['To'] = invitation.email
         
-        # Plain text fallback
+        
         msg.set_content(f"A special message from {sender_name}:\n\n{invitation.content}\n\nSent via Beloved Connect")
         
-        # Beautiful HTML Template
+        
         html_template = f"""
         <!DOCTYPE html>
         <html>
@@ -238,7 +241,7 @@ def send_invitation(invitation: Invitation, current_user: dict = Depends(get_cur
 @app.get("/api/notes", response_model=List[Note])
 def get_notes(current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
-    notes = conn.execute("SELECT * FROM notes WHERE user_id = ? ORDER BY id DESC", (current_user["id"],)).fetchall()
+    notes = conn.execute("SELECT * FROM notes WHERE user_id = ? OR shared_with = ? ORDER BY id DESC", (current_user["id"], current_user["username"])).fetchall()
     conn.close()
     return [dict(n) for n in notes]
 
@@ -247,12 +250,62 @@ def add_note(note: Note, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cur = conn.cursor()
     date_str = note.date or now_str()
-    cur.execute("INSERT INTO notes (user_id, title, content, category, date) VALUES (?, ?, ?, ?, ?)",
-                (current_user["id"], note.title, note.content, note.category, date_str))
+    cur.execute("INSERT INTO notes (user_id, title, content, category, date, shared_with) VALUES (?, ?, ?, ?, ?, ?)",
+                (current_user["id"], note.title, note.content, note.category, date_str, note.shared_with))
     conn.commit()
     note.id = cur.lastrowid
     note.date = date_str
     conn.close()
+
+    # If the note is shared with someone, send them an email
+    if note.shared_with:
+        try:
+            sender_name = current_user.get("name") or current_user.get("username")
+            msg = EmailMessage()
+            msg['Subject'] = f"A special note shared by {sender_name}"
+            msg['From'] = f"Beloved Connect <{SMTP_USERNAME}>"
+            msg['To'] = note.shared_with
+            
+            msg.set_content(f"{sender_name} shared a note with you: {note.title}\n\n{note.content}\n\nSent via Beloved Connect")
+            
+            html_template = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            </head>
+            <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #fdf2f8; margin: 0; padding: 40px 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">📝</div>
+                        <h1 style="color: #be123c; margin: 0; font-size: 28px; font-weight: 700;">A Note from {sender_name}</h1>
+                        <p style="color: #64748b; font-size: 16px; margin-top: 8px;">They wanted to share this thought with you.</p>
+                    </div>
+                    
+                    <h2 style="color: #334155; margin-bottom: 10px;">{note.title}</h2>
+                    <div style="background-color: #f1f5f9; border-left: 4px solid #be123c; padding: 24px; border-radius: 4px 12px 12px 4px; margin-bottom: 30px;">
+                        <p style="color: #334155; font-size: 18px; line-height: 1.6; margin: 0; white-space: pre-wrap;">{note.content}</p>
+                    </div>
+                    
+                    <div style="text-align: center; color: #94a3b8; font-size: 14px; border-top: 1px solid #f1f5f9; padding-top: 24px;">
+                        <p style="margin: 0;">Sent with ❤️ from <b>Beloved Connect</b></p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            msg.add_alternative(html_template, subtype='html')
+
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+                server.starttls()
+                server.login(SMTP_USERNAME, SMTP_PASSWORD)
+                server.send_message(msg)
+                
+        except Exception as e:
+            print(f"Failed to send note email via SMTP: {e}")
+
     return note
 
 @app.delete("/api/notes/{note_id}")

@@ -5,6 +5,7 @@ import { Heart, Sparkles, PenLine } from 'lucide-react';
 const NewMemory = ({ onAddMemory }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [sharedWith, setSharedWith] = useState('');
   const [isFocused, setIsFocused] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -16,11 +17,13 @@ const NewMemory = ({ onAddMemory }) => {
       id: Date.now(),
       title,
       content,
+      shared_with: sharedWith || null,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     });
 
     setTitle('');
     setContent('');
+    setSharedWith('');
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 2000);
   };
@@ -92,6 +95,33 @@ const NewMemory = ({ onAddMemory }) => {
             className="input-accent"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: isFocused === 'content' ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.div>
+
+        <motion.div
+          className={`form-group ${isFocused === 'sharedWith' ? 'focused' : ''}`}
+          animate={{ scale: isFocused === 'sharedWith' ? 1.01 : 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <label htmlFor="sharedWith">
+            <Heart size={12} />
+            Share with (Email) - Optional
+          </label>
+          <input
+            type="email"
+            id="sharedWith"
+            className="input"
+            placeholder="Enter their email to share this memory"
+            value={sharedWith}
+            onChange={(e) => setSharedWith(e.target.value)}
+            onFocus={() => setIsFocused('sharedWith')}
+            onBlur={() => setIsFocused(null)}
+          />
+          <motion.span
+            className="input-accent"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: isFocused === 'sharedWith' ? 1 : 0 }}
             transition={{ duration: 0.3 }}
           />
         </motion.div>
