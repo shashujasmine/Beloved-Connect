@@ -4,7 +4,7 @@
 
 Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a shared memory, a special note, or a cherished moment, Beloved Connect provides a premium platform to keep those connections alive.
 
-The email option is not working properly but the aim is to share the thoughts and notes . 
+The email option is not working properly but the aim is to share the thoughts and notes . After storing the memories , the edit option is not workable and sending mail is not working properly . apart from that all the options are good.
 
 ##  The Core Mission
 
