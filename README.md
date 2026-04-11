@@ -77,4 +77,4 @@ Beloved-Connect/
 5. Open a Pull Request.
 
 ---
-Built with people for those we love.
+Built with people for those we love...
