@@ -78,7 +78,7 @@ const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
                   <div className="form-group">
                     <label htmlFor="email">
                       <Mail size={12} />
-                      Their Email Address
+                      Their Email Address <span style={{ color: 'var(--accent-rose, #e11d48)', fontSize: '0.85em', fontWeight: 'normal', marginLeft: '5px' }}>(Not working properly at this time)</span>
                     </label>
                     <input 
                       type="email" 

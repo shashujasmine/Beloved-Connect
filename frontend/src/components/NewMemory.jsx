@@ -106,7 +106,7 @@ const NewMemory = ({ onAddMemory }) => {
         >
           <label htmlFor="sharedWith">
             <Heart size={12} />
-            Share with (Email) - Optional
+            Share with (Email) - Optional <span style={{ color: 'var(--accent-rose, #e11d48)', fontSize: '0.85em', fontWeight: 'normal', marginLeft: '5px' }}>(Not working properly at this time)</span>
           </label>
           <input
             type="email"
