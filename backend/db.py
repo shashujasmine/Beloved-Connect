@@ -28,9 +28,15 @@ def init_db():
             content TEXT,
             date TEXT,
             shared_with TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
+    # Migration: add created_at to existing memories table if missing
+    try:
+        c.execute('ALTER TABLE memories ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+    except Exception:
+        pass
     c.execute('''
         CREATE TABLE IF NOT EXISTS notes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,9 +46,15 @@ def init_db():
             category TEXT,
             date TEXT,
             shared_with TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
+    # Migration: add created_at to existing notes table if missing
+    try:
+        c.execute('ALTER TABLE notes ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+    except Exception:
+        pass
     c.execute('''
         CREATE TABLE IF NOT EXISTS invitations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

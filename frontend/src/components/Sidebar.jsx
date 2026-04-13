@@ -1,13 +1,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, BookOpen, FileText, Send, Users } from 'lucide-react';
+import { X, Heart, BookOpen, FileText, Send, Users, Clock } from 'lucide-react';
 
 const menuItems = [
   { id: 'memories', label: 'Memories', icon: Heart },
+  { id: 'timeline', label: 'Memory Timeline', icon: Clock },
   { id: 'notes', label: 'My Notes', icon: FileText },
   { id: 'beloved', label: 'Beloved Ones', icon: Users },
   { id: 'invitations', label: 'Sent Invitations', icon: Send },
 ];
+
 
 const Sidebar = ({ isOpen, onClose, activeView, onNavigate }) => {
   return (

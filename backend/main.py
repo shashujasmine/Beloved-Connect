@@ -349,3 +349,59 @@ def delete_beloved(person_id: int, current_user: dict = Depends(get_current_user
     conn.commit()
     conn.close()
     return {"message": "Person deleted"}
+
+# ── Timeline ──────────────────────────────────────────────────────────────────
+
+@app.get("/api/timeline")
+def get_timeline(
+    sort: str = "desc",           # "asc" | "desc"
+    person: Optional[str] = None, # filter by shared_with email/username
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Returns a merged, chronologically sorted list of memories + notes
+    belonging to (or shared with) the current user.
+    Each item has: id, kind ("memory"|"note"), title, content, date,
+                   shared_with, created_at, category (notes only).
+    """
+    conn = get_db_connection()
+
+    # Build WHERE clause for optional person filter
+    person_clause = ""
+    person_params_m: list = []
+    person_params_n: list = []
+
+    if person:
+        person_clause = " AND (shared_with = ? OR shared_with = ?)"
+        person_params_m = [person, person]
+        person_params_n = [person, person]
+
+    memories_rows = conn.execute(
+        f"""SELECT id, 'memory' AS kind, title, content, date,
+                   COALESCE(shared_with, '') AS shared_with,
+                   COALESCE(created_at, date) AS created_at,
+                   '' AS category
+            FROM memories
+            WHERE user_id = ?{person_clause}""",
+        [current_user["id"]] + person_params_m
+    ).fetchall()
+
+    notes_rows = conn.execute(
+        f"""SELECT id, 'note' AS kind, title, content, date,
+                   COALESCE(shared_with, '') AS shared_with,
+                   COALESCE(created_at, date) AS created_at,
+                   COALESCE(category, '') AS category
+            FROM notes
+            WHERE user_id = ?{person_clause}""",
+        [current_user["id"]] + person_params_n
+    ).fetchall()
+
+    conn.close()
+
+    combined = [dict(r) for r in memories_rows] + [dict(r) for r in notes_rows]
+
+    # Sort by created_at; fallback gracefully if value is empty
+    reverse = (sort != "asc")
+    combined.sort(key=lambda x: x.get("created_at") or "", reverse=reverse)
+
+    return combined

@@ -8,9 +8,11 @@ import Notes from './components/Notes';
 import BelovedOnes from './components/BelovedOnes';
 import SendLoveModal from './components/SendLoveModal';
 import Auth from './components/Auth';
+import MemoryTimeline from './components/MemoryTimeline';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send } from 'lucide-react';
 import './App.css';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://belovedconnect.up.railway.app/api';
 function App() {
@@ -210,6 +212,11 @@ function App() {
                   )}
                 </div>
               </div>
+            </motion.div>
+          )}
+          {activeView === 'timeline' && (
+            <motion.div key="timeline" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.35 }}>
+              <MemoryTimeline token={token} />
             </motion.div>
           )}
         </AnimatePresence>
