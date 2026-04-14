@@ -44,7 +44,6 @@ app = FastAPI(title="Beloved Connect API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -182,12 +181,13 @@ def add_memory(memory: Memory, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cur = conn.cursor()
     date_str = memory.date or now_str()
-    cur.execute("INSERT INTO memories (user_id, title, content, date, shared_with) VALUES (?, ?, ?, ?, ?)", 
+    cur.execute("INSERT INTO memories (user_id, title, content, date, shared_with, created_at) VALUES (?, ?, ?, ?, ?, datetime('now'))", 
                 (current_user["id"], memory.title, memory.content, date_str, memory.shared_with))
     conn.commit()
-    memory.id = cur.lastrowid
-    memory.date = date_str
+    memory_id = cur.lastrowid
+    row = conn.execute("SELECT * FROM memories WHERE id = ?", (memory_id,)).fetchone()
     conn.close()
+    return dict(row)
     
     # Log activity if shared with a beloved one
     if memory.shared_with:
@@ -372,12 +372,15 @@ def add_note(note: Note, current_user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cur = conn.cursor()
     date_str = note.date or now_str()
-    cur.execute("INSERT INTO notes (user_id, title, content, category, date, shared_with) VALUES (?, ?, ?, ?, ?, ?)",
+    cur.execute("INSERT INTO notes (user_id, title, content, category, date, shared_with, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))",
                 (current_user["id"], note.title, note.content, note.category, date_str, note.shared_with))
     conn.commit()
-    note.id = cur.lastrowid
-    note.date = date_str
+    note_id = cur.lastrowid
+    row = conn.execute("SELECT * FROM notes WHERE id = ?", (note_id,)).fetchone()
     conn.close()
+    
+    # Reload the note from DB to get the created_at
+    note_data = dict(row)
 
     # If the note is shared with someone, send them an email
     if note.shared_with:
@@ -444,7 +447,7 @@ def add_note(note: Note, current_user: dict = Depends(get_current_user)):
                 details=f'Shared note: {note.title}'
             )
 
-    return note
+    return note_data
 
 @app.delete("/api/notes/{note_id}")
 def delete_note(note_id: int, current_user: dict = Depends(get_current_user)):
@@ -536,20 +539,23 @@ def get_timeline(
 
     conn.close()
 
-    # Merge and sort
-    items = [dict(r) for r in memories_rows] + [dict(r) for r in notes_rows]
-    reverse = sort.lower() != "asc"
-    
-    # Robust sorting: handle None or empty created_at
-    def get_sort_key(x):
-        val = x.get("created_at")
-        if val is None:
-            return ""
-        return str(val)
+    try:
+        # Merge and sort
+        items = [dict(r) for r in memories_rows] + [dict(r) for r in notes_rows]
+        reverse = sort.lower() != "asc"
         
-    items.sort(key=get_sort_key, reverse=reverse)
-
-    return items
+        # Robust sorting: handle None or empty created_at
+        def get_sort_key(x):
+            val = x.get("created_at")
+            if val is None:
+                return ""
+            return str(val)
+            
+        items.sort(key=get_sort_key, reverse=reverse)
+        return items
+    except Exception as e:
+        logger.error(f"Error processing timeline: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 class ActivityLog(BaseModel):
     activity_type: str

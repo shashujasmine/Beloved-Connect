@@ -34,7 +34,7 @@ def init_db():
     ''')
     # Migration: add created_at to existing memories table if missing
     try:
-        c.execute('ALTER TABLE memories ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        c.execute('ALTER TABLE memories ADD COLUMN created_at TIMESTAMP')
     except Exception:
         pass
     c.execute('''
@@ -52,7 +52,7 @@ def init_db():
     ''')
     # Migration: add created_at to existing notes table if missing
     try:
-        c.execute('ALTER TABLE notes ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        c.execute('ALTER TABLE notes ADD COLUMN created_at TIMESTAMP')
     except Exception:
         pass
     c.execute('''

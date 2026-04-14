@@ -18,3 +18,4 @@ try:
     print(f"Response: {response.text}")
 except Exception as e:
     print(f"Error: {e}")
+
