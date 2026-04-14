@@ -76,10 +76,63 @@ def init_db():
             mobile TEXT,
             email TEXT,
             notes TEXT,
+            last_contact TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+    # Migration: add last_contact to existing beloved table if missing
+    try:
+        c.execute('ALTER TABLE beloved ADD COLUMN last_contact TIMESTAMP')
+    except Exception:
+        pass
+    
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS activity_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            beloved_id INTEGER,
+            activity_type TEXT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            details TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(beloved_id) REFERENCES beloved(id)
+        )
+    ''')
+    
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            beloved_id INTEGER,
+            reminder_type TEXT,
+            message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            due_date TIMESTAMP,
+            is_read INTEGER DEFAULT 0,
+            is_dismissed INTEGER DEFAULT 0,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(beloved_id) REFERENCES beloved(id)
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS scheduled_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            recipient_email TEXT NOT NULL,
+            recipient_name TEXT DEFAULT '',
+            subject TEXT DEFAULT '',
+            content TEXT NOT NULL,
+            scheduled_date TEXT NOT NULL,
+            scheduled_time TEXT DEFAULT '09:00',
+            occasion TEXT DEFAULT '',
+            status TEXT DEFAULT 'scheduled',
+            recurrence TEXT DEFAULT 'none',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            sent_at TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     ''')
     conn.commit()
     conn.close()
 
-init_db()
+# init_db() - moved to main.py startup for better control and to avoid reload loops

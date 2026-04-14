@@ -894,6 +894,24 @@
   margin-bottom: 0.5rem;
 }
 
+.beloved-last-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--accent-warm);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  padding: 0.3rem 0.7rem;
+  background: rgba(250, 115, 30, 0.08);
+  border-radius: 0.4rem;
+  width: fit-content;
+}
+
+.dark .beloved-last-contact {
+  background: rgba(250, 115, 30, 0.15);
+}
+
 .beloved-contact {
   font-size: 0.85rem;
   color: var(--text-muted);

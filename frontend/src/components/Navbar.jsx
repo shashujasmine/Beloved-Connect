@@ -2,7 +2,7 @@ import React from 'react';
 import { Heart, Sun, Moon, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const Navbar = ({ toggleTheme, isDark, onMenuOpen, children }) => {
+const Navbar = ({ toggleTheme, isDark, onMenuOpen, children, token, API_URL }) => {
   return (
     <nav className="navbar">
       <div className="container nav-container">
@@ -47,5 +47,6 @@ const Navbar = ({ toggleTheme, isDark, onMenuOpen, children }) => {
     </nav>
   );
 };
+
 
 export default Navbar;

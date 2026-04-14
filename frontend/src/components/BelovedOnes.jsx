@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Phone, Mail, Trash2, Heart, User } from 'lucide-react';
+import { Plus, Phone, Mail, Trash2, Heart, User, Clock } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
@@ -9,6 +9,7 @@ const BelovedOnes = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [form, setForm] = useState({ name: '', relation: '', mobile: '', email: '', notes: '' });
   const [isFocused, setIsFocused] = useState(null);
+  const [lastContact, setLastContact] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -16,9 +17,48 @@ const BelovedOnes = () => {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
-      .then(data => setPeople(Array.isArray(data) ? data : []))
+      .then(data => {
+        setPeople(Array.isArray(data) ? data : []);
+        // Fetch last contact info for each person
+        if (Array.isArray(data)) {
+          data.forEach(person => {
+            fetchLastContact(person.id, token);
+          });
+        }
+      })
       .catch(err => console.error('Failed to fetch beloved ones:', err));
   }, []);
+
+  const fetchLastContact = async (personId, token) => {
+    try {
+      const res = await fetch(`${API_URL}/beloved/${personId}/last-contact`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLastContact(prev => ({
+          ...prev,
+          [personId]: data
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching last contact:', err);
+    }
+  };
+
+  const getLastContactDisplay = (personId) => {
+    const info = lastContact[personId];
+    if (!info || !info.last_contact) {
+      return 'Never contacted';
+    }
+    
+    const daysSince = info.days_since;
+    if (daysSince === 0) return 'Contacted today!';
+    if (daysSince === 1) return 'Contacted yesterday';
+    if (daysSince < 7) return `${daysSince} days ago`;
+    if (daysSince < 30) return `${Math.floor(daysSince / 7)}w ago`;
+    return `${Math.floor(daysSince / 30)}m ago`;
+  };
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -39,6 +79,14 @@ const BelovedOnes = () => {
       if (res.ok) {
         const newPerson = await res.json();
         setPeople([newPerson, ...people]);
+        // Fetch last contact info for new person
+        const contact = await fetch(`${API_URL}/beloved/${newPerson.id}/last-contact`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).then(r => r.json());
+        setLastContact(prev => ({
+          ...prev,
+          [newPerson.id]: contact
+        }));
         setForm({ name: '', relation: '', mobile: '', email: '', notes: '' });
         setIsAdding(false);
       }
@@ -97,7 +145,7 @@ const BelovedOnes = () => {
                 <div className="form-group">
                   <label htmlFor="name">
                     <User size={12} />
-                    Full Name
+                    Name
                   </label>
                   <input 
                     type="text" 
@@ -228,6 +276,13 @@ const BelovedOnes = () => {
                     </button>
                   </div>
                   {person.relation && <span className="beloved-relation">{person.relation}</span>}
+                  
+                  {/* Last Contact Info */}
+                  <div className="beloved-last-contact">
+                    <Clock size={13} />
+                    <span>{getLastContactDisplay(person.id)}</span>
+                  </div>
+                  
                     <div className="beloved-contact">
                     {person.mobile && (
                       <span 

@@ -171,7 +171,7 @@ const Notes = () => {
                 <div className="form-group">
                   <label htmlFor="note-shared">
                     <Heart size={12} />
-                    Share with (Email) - Optional <span style={{ color: 'var(--accent-rose, #e11d48)', fontSize: '0.85em', fontWeight: 'normal', marginLeft: '5px' }}>(Not working properly at this time)</span>
+                    Share with (Email) - Optional
                   </label>
                   <input 
                     type="email" 

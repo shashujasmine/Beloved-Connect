@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Heart, Mail } from 'lucide-react';
+import { X, Send, Heart, Mail, RefreshCw } from 'lucide-react';
 
 const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
   const [email, setEmail] = useState(initialEmail);
@@ -14,19 +14,35 @@ const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
     }
   }, [isOpen, initialEmail]);
 
-  const handleSubmit = (e) => {
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !content) return;
+    if (!email || !content || isSending) return;
     
-    onSend({ email, content, type: 'message' });
+    setIsSending(true);
+    setError('');
     
-    setEmail('');
-    setContent('');
-    setIsSent(true);
-    setTimeout(() => {
-      setIsSent(false);
-      onClose();
-    }, 1500);
+    try {
+      const success = await onSend({ email, content, type: 'message' });
+      
+      if (success) {
+        setEmail('');
+        setContent('');
+        setIsSent(true);
+        setTimeout(() => {
+          setIsSent(false);
+          onClose();
+        }, 1500);
+      } else {
+        setError('Failed to send. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -71,6 +87,9 @@ const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
                   <div>
                     <h2>Send to Beloved</h2>
                     <p>Share your heart across the distance</p>
+                    <div style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px', fontWeight: 'bold' }}>
+                       ⚠️ Not working properly this time
+                    </div>
                   </div>
                 </div>
                 
@@ -78,7 +97,7 @@ const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
                   <div className="form-group">
                     <label htmlFor="email">
                       <Mail size={12} />
-                      Their Email Address <span style={{ color: 'var(--accent-rose, #e11d48)', fontSize: '0.85em', fontWeight: 'normal', marginLeft: '5px' }}>(Not working properly at this time)</span>
+                      Their Email Address
                     </label>
                     <input 
                       type="email" 
@@ -110,14 +129,37 @@ const SendLoveModal = ({ isOpen, onClose, onSend, initialEmail = '' }) => {
                     />
                   </div>
                   
+                  {error && (
+                    <motion.div 
+                      className="error-message"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '1rem', textAlign: 'center' }}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+                  
                   <motion.button 
                     type="submit" 
-                    className="btn-primary send-btn"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    className={`btn-primary send-btn ${isSending ? 'loading' : ''}`}
+                    whileHover={{ scale: isSending ? 1 : 1.02 }}
+                    whileTap={{ scale: isSending ? 1 : 0.98 }}
+                    disabled={isSending}
                   >
-                    <Send size={18} />
-                    Send with Love
+                    {isSending ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                      >
+                        <RefreshCw size={18} />
+                      </motion.div>
+                    ) : (
+                      <>
+                        <Send size={18} />
+                        Send with Love
+                      </>
+                    )}
                   </motion.button>
                 </form>
               </motion.div>

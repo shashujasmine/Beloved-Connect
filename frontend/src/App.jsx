@@ -9,12 +9,14 @@ import BelovedOnes from './components/BelovedOnes';
 import SendLoveModal from './components/SendLoveModal';
 import Auth from './components/Auth';
 import MemoryTimeline from './components/MemoryTimeline';
+import ReminderNotifications from './components/ReminderNotifications';
+import ScheduledMessages from './components/ScheduledMessages';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send } from 'lucide-react';
 import './App.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://belovedconnect.up.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isDark, setIsDark] = useState(false);
@@ -109,12 +111,15 @@ function App() {
       if (res.ok) {
         const result = await res.json();
         setInvitations(prev => [result.data, ...prev]);
-        alert('Your invitation has been sent!');
+        // alert('Your invitation has been sent!');
+        return true;
       } else {
         alert('Failed to send invitation');
+        return false;
       }
     } catch (err) {
       alert('Error sending invitation.');
+      return false;
     }
   };
 
@@ -135,7 +140,14 @@ function App() {
         <div className="blob blob-2"></div>
         <div className="blob blob-3"></div>
       </div>
-      <Navbar isDark={isDark} toggleTheme={() => setIsDark(d => !d)} onMenuOpen={() => setIsSidebarOpen(true)}>
+      <Navbar 
+        isDark={isDark} 
+        toggleTheme={() => setIsDark(d => !d)} 
+        onMenuOpen={() => setIsSidebarOpen(true)}
+        token={token}
+        API_URL={API_URL}
+      >
+        <ReminderNotifications token={token} API_URL={API_URL} />
         <button onClick={handleLogout} className="btn-cancel" style={{ marginLeft: '1rem', padding: '0.4rem 0.8rem' }}>Logout</button>
       </Navbar>
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} activeView={activeView} onNavigate={setActiveView} />
@@ -183,10 +195,19 @@ function App() {
             </motion.div>
           )}
 
+          {activeView === 'scheduled' && (
+            <motion.div key="scheduled" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.35 }}>
+              <ScheduledMessages />
+            </motion.div>
+          )}
+
           {activeView === 'invitations' && (
             <motion.div key="invitations" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.35 }}>
               <div className="container notes-page">
                 <h2 className="section-title">Sent Invitations</h2>
+                <div style={{ color: '#ef4444', fontSize: '0.9rem', marginBottom: '1rem', fontWeight: 'bold', textAlign: 'center' }}>
+                  ⚠️ The email sending option is not working properly this time.
+                </div>
                 <p className="section-subtitle">All the messages and songs you have sent to your beloved ones.</p>
                 <div className="memories-grid" style={{ marginTop: '2rem' }}>
                   {invitations.map((inv, i) => (
