@@ -4,14 +4,20 @@
 
 Beloved Connect is a beautiful, interactive web application designed to help you store your most precious memories and stay connected with your loved ones. Whether it's a shared memory, a special note, or a cherished moment, Beloved Connect provides a premium platform to keep those connections alive.
 
-**Please note that:**
-The email option is not working properly but i enhave it in future updates, the aim is to share the thoughts and notes . After storing the memories , the edit option is not workable and sending mail is not working properly . apart from that all the options are good.
+**Status Update:**
+All core features including **Memory Management**, **Notes**, **Beloved Ones**, and the **Memory Timeline** are now fully functional. 
+
+### 🚀 Recent Fixes & Improvements
+- **Fixed Memory Timeline**: Resolved the "Failed to fetch" error caused by database schema inconsistencies and migration issues.
+- **Database Schema Updates**: Added missing `created_at` columns to ensure proper chronological sorting of all memories and notes.
+- **Improved sorting**: New entries now automatically include precise timestamps for accurate timeline representation.
+- **CORS Reliability**: Enhanced backend CORS configuration to prevent browser-side connection errors.
+
+*Note: While the interface includes communication options, the heart of the project lies in memory preservation and relationship tracking. SMTP email sending is currently under configuration, and the aim remains focused on sharing thoughts and notes through the internal platform.*
 
 ##  The Core Mission
 
-The main purpose of this project is to provide a dedicated space for **storing and recapping memories**. It allows you to invite your people, take notes about your shared experiences, and build a lasting digital archive of your beloved ones. The project's main core idea is to connect and share thoughts , memories and notes that we're storing . 
-
-*Note: While the interface includes communication options, the heart of the project lies in memory preservation and relationship tracking. Call and video functions are currently placeholders, as the primary focus is on the "Invitations" and "Memory Storage" systems.*
+The main purpose of this project is to provide a dedicated space for **storing and recapping memories**. It allows you to invite your people, take notes about your shared experiences, and build a lasting digital archive of your beloved ones. The project's main core idea is to connect and share thoughts, memories, and notes that we're storing.
 
 ##  Features
 
